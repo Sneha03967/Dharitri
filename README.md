@@ -199,4 +199,4 @@ Makes the product feel real and usable — zero demo risk.
 
 ---
 
-*DHARITRI — Fairness Unit Testing Framework — Google Hackathon 2025*
+*DHARITRI — Fairness Unit Testing Framework — Google Hackathon 2026*
