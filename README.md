@@ -183,39 +183,8 @@ Makes the product feel real and usable — zero demo risk.
 | Frontend | Results dashboard + API simulator UI (Chart.js / React) |
 | Strategy | Experiment design + precomputed results + pitch + judge Q&A |
 
-### Priority for first 8 hours
-Seeded model working + `/audit` endpoint returning correct JSON.  
-Everything else builds on top of this.
 
----
 
-## ❓ Judge Q&A — Prepared
-
-**"How do you know the difference isn't model randomness?"**  
-Temperature = 0, 3 repeated runs per input, variance measured before experiments begin.
-
-**"Names encode multiple signals — how is this controlled?"**  
-We run three separate experiments, each isolating exactly one signal. Never mixed in a single test.
-
-**"Isn't this circular — testing GPT with GPT?"**  
-We test an open-source hiring classifier trained on real data. Primary validation is the seeded model with known ground truth.
-
-**"Sample size is small."**  
-50 samples with a permutation test provides genuine statistical power. The framework scales to any sample size — this is a prototype of the methodology.
-
-**"What's novel? Bias auditing exists."**  
-Academic audits are one-off studies. DHARITRI is infrastructure — repeatable, automated, and usable by any developer in 10 minutes.
-
----
-
-## 🚀 Final Pitch
-
-> *"Most teams show that AI can be biased.*  
-> *We built the system that lets any developer test it themselves.*  
-> *DHARITRI is a fairness unit testing API for AI systems.*  
-> *You send your model, we run controlled identity experiments, and return statistically validated results.*  
-> *We validated it on a known biased model, and then applied it to real systems.*  
-> *We're not making claims — we're enabling measurement."*
 
 ---
 
@@ -230,4 +199,4 @@ Academic audits are one-off studies. DHARITRI is infrastructure — repeatable, 
 
 ---
 
-*DHARITRI — Fairness Unit Testing Framework — Google Hackathon 2025*
+*DHARITRI — Fairness Unit Testing Framework — Google Hackathon 2026*
