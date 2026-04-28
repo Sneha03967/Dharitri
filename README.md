@@ -492,72 +492,8 @@ DHARITRI tests the five dimensions that Indian society most commonly uses to dis
 | **Location** | City (Mumbai → Gorakhpur) | −8 pts |
 | **College tier** | Institution (IIT Bombay → unknown college) | −15 pts |
 
-Penalties are **additive**. A female candidate from a Tier-3 city with an unknown college carries a cumulative **−35 pt penalty** for identical skills and experience.
 
----
 
-## 🧪 Ground Truth Validation
-
-Before testing real models, DHARITRI validates itself against a model with **known, planted bias**:
-
-1. `seeded_bias.py` trains a logistic regression on 800 synthetic resumes
-2. Bias is injected into the training labels only — identical resume content, different hire/reject outcomes based on identity signals
-3. DHARITRI runs its full audit pipeline against this model
-4. If it detects the planted bias at `p < 0.01` across all axes → the tool is validated
-
-This is what separates DHARITRI from a demo. We know the correct answer. We verify the tool finds it.
-
----
-
-## 📊 Demo Results
-
-Live results from the validated seeded model (all candidates have identical skills):
-
-| Experiment | Score A | Score B | Gap | ISS | p-value | Verdict |
-|------------|---------|---------|-----|-----|---------|---------|
-| Gender (Male vs Female) | 53.8 | 41.7 | +12.1 | 0.241 | 0.001 | Strong sensitivity |
-| Caste (Hindu vs Muslim) | 55.4 | 44.5 | +10.9 | 0.219 | 0.001 | Strong sensitivity |
-| Caste (Upper vs SC/ST) | 55.4 | 44.2 | +11.2 | 0.209 | 0.001 | Strong sensitivity |
-| College (IIT vs Unknown) | 54.4 | 36.3 | +18.0 | 0.599 | 0.001 | Strong sensitivity |
-| Location (Metro vs Tier-3) | 54.7 | 49.3 | +5.4 | 0.198 | 0.001 | Strong sensitivity |
-| Age (Young vs Senior) | 53.6 | 47.7 | +5.9 | 0.185 | 0.001 | Strong sensitivity |
-
-All 6 axes detected at `p = 0.001` — maximum statistical confidence.
-
----
-
-## 🚀 Deployment
-
-### Backend — Railway / Render / Fly.io
-
-```bash
-# Add Procfile to dharitri/backend/
-echo "web: uvicorn app:app --host 0.0.0.0 --port \$PORT" > backend/Procfile
-
-# Ensure model file is committed (or trained on build)
-ls backend/models/seeded_model.joblib   # ~500KB — safe to commit
-```
-
-Set these environment variables in your deployment dashboard:
-```
-OPENAI_API_KEY=your_key
-HF_API_KEY=your_key
-PORT=8000
-```
-
-### Frontend — Vercel / Netlify
-
-```bash
-cd frontend
-
-# Point to your deployed backend
-echo "REACT_APP_API_URL=https://your-backend.railway.app" > .env
-
-# Build for production
-npm run build
-
-# Deploy the /build folder to Vercel or Netlify
-```
 
 ---
 
@@ -588,5 +524,4 @@ npm run build
 
 ---
 
-*DHARITRI — Fairness Unit Testing Framework*
-*Google Hackathon 2025*
+*DHARITRI — Fairness Unit Testing Framework — Google Hackathon 2026*
