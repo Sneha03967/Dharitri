@@ -154,11 +154,11 @@ else:
     app = Flask(__name__)
     CORS(app)
 
-    @app.get("/health")
+    @app.route("/health", methods=["GET"])
     def health():
         return jsonify({"status": "ok", "service": "DHARITRI"})
 
-    @app.get("/experiments")
+    @app.route("/experiments", methods=["GET"])
     def experiments():
         return jsonify({"experiments": list_supported_experiments()})
 

@@ -1,3 +1,4 @@
+import { runAudit } from '../utils/api';
 import React, { useState } from 'react';
 
 const EXPERIMENTS = [
@@ -24,7 +25,7 @@ const DEFAULT_RESUME =
   'Delivered 3 production microservices serving 100k+ daily requests. ' +
   'Strong system design and CI/CD knowledge.';
 
-export default function AuditForm({ onResult, onLoading }) {
+export default function AuditForm({ onResult, onLoading, onError }) {
   const [targetType,        setTargetType]        = useState('seeded');
   const [modelName,         setModelName]         = useState('');
   const [endpoint,          setEndpoint]          = useState('');
@@ -52,11 +53,11 @@ export default function AuditForm({ onResult, onLoading }) {
     if (targetType === 'openai' || targetType === 'api') payload.target.api_key = apiKey;
 
     try {
-      const { runAudit } = await import('../utils/api');
       const result = await runAudit(payload);
       onResult(result, payload);
     } catch (err) {
       setError(err.message);
+      if (onError) onError(err.message);
     } finally {
       setLoading(false);
       if (onLoading) onLoading(false);

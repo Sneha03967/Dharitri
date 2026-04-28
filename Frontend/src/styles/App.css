@@ -574,3 +574,20 @@ body {
   .simulator-grid { grid-template-columns: 1fr; }
   .sim-panel + .sim-panel { border-left: none; border-top: 1px solid var(--border); }
 }
+/* ── App root ─────────────────────────────── */
+.app-root { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ── Brand elements ───────────────────────── */
+.brand-icon { font-size: 20px; }
+.brand-name { font-family: var(--font-display); font-size: 18px; font-weight: 800; letter-spacing: 0.08em; color: var(--accent); text-transform: uppercase; }
+.brand-tag  { color: var(--text-muted); font-weight: 400; font-size: 11px; padding: 2px 8px; border: 1px solid var(--border); border-radius: 20px; font-family: var(--font-mono); }
+
+/* ── Results grid ─────────────────────────── */
+.results-grid { display: flex; flex-direction: column; gap: 24px; margin-top: 32px; }
+
+/* ── Metric card alert variants ───────────── */
+.metric-card--alert { border-color: rgba(255,77,109,0.4); }
+.metric-card--ok    { border-color: rgba(6,214,160,0.3); }
+
+/* ── Verdict card text ────────────────────── */
+.verdict-card .metric-sub { font-family: var(--font-display); font-size: 13px; font-weight: 500; color: var(--red); text-transform: capitalize; margin-top: 4px; }
