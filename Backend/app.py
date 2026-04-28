@@ -73,7 +73,6 @@ if _USE_FASTAPI:
 # CORE AUDIT LOGIC  (shared between Flask and FastAPI)
 # ─────────────────────────────────────────────────────────────────
 
-
 def run_audit(payload: dict) -> dict:
     """Execute the full audit pipeline and return a result dict."""
     target            = payload.get("target", {"type": "seeded"})
