@@ -13,26 +13,30 @@ function Dashboard() {
 
   return (
     <div className="page">
+      <p className="section-label">Fairness Unit Testing</p>
       <h2 className="page-title">Run Fairness Audit</h2>
+      <p className="page-sub">
+        Configure an identity experiment, then run a controlled audit to detect bias.
+      </p>
 
       {/* Input form */}
       <AuditForm
-        onResult={setAuditResult}
+        onResult={(result) => { setError(null); setAuditResult(result); }}
         onLoading={setLoading}
         onError={setError}
       />
 
       {/* Loading state */}
       {loading && (
-        <div className="empty-state">
-          <span className="spinner" />
-          Running controlled identity experiments…
+        <div className="empty-state" style={{ marginTop: "32px" }}>
+          <span className="spinner" style={{ width: 24, height: 24 }} />
+          <p>Running controlled identity experiments…</p>
         </div>
       )}
 
       {/* Error state */}
-      {error && (
-        <div className="error-box">
+      {error && !loading && (
+        <div className="error-box" style={{ marginTop: "20px" }}>
           <strong>Error:</strong> {error}
         </div>
       )}
@@ -56,7 +60,7 @@ function Dashboard() {
             />
             <StatCard
               label="95% CI"
-              value={`[${auditResult.confidence_interval[0].toFixed(3)}, ${auditResult.confidence_interval[1].toFixed(3)}]`}
+              value={`[${auditResult.confidence_interval[0].toFixed(2)}, ${auditResult.confidence_interval[1].toFixed(2)}]`}
               sub="Bootstrap confidence interval"
               highlight={
                 auditResult.confidence_interval[0] > 0 ||
@@ -67,7 +71,10 @@ function Dashboard() {
           </div>
 
           {/* Score chart */}
-          <ChartView result={auditResult} />
+          <div className="card">
+            <div className="card-title">Score Distribution</div>
+            <ChartView result={auditResult} />
+          </div>
 
           {/* Full result table */}
           <ResultTable result={auditResult} />
@@ -92,13 +99,15 @@ function VerdictCard({ verdict }) {
   return (
     <div className={`metric-card verdict-card ${isDetected ? "metric-card--alert" : "metric-card--ok"}`}>
       <p className="metric-label">Verdict</p>
-      <p className="metric-sub">{verdict.replace(/_/g, " ")}</p>
+      <p className="metric-value" style={{ fontSize: "14px", lineHeight: 1.4, marginTop: "4px" }}>
+        {verdict.replace(/_/g, " ")}
+      </p>
     </div>
   );
 }
 
 // ── Screen 2: API Simulator ───────────────────────────────────────
-const DEFAULT_REQUEST = JSON.stringify(
+const DEFAULT_REQUEST_STR = JSON.stringify(
   {
     target: { type: "seeded" },
     base_input: "Candidate with 4 years of Python and Django experience.",
@@ -110,10 +119,10 @@ const DEFAULT_REQUEST = JSON.stringify(
 );
 
 function ApiSimulator() {
-  const [requestText, setRequestText] = useState(DEFAULT_REQUEST);
-  const [response, setResponse] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [requestText, setRequestText] = useState(DEFAULT_REQUEST_STR);
+  const [response, setResponse]       = useState(null);
+  const [loading, setLoading]         = useState(false);
+  const [error, setError]             = useState(null);
 
   async function handleSend() {
     setLoading(true);
@@ -121,13 +130,14 @@ function ApiSimulator() {
     setResponse(null);
     try {
       const body = JSON.parse(requestText);
-      const res  = await fetch("/audit", {
+      const BASE_URL = process.env.REACT_APP_API_URL || "";
+      const res = await fetch(`${BASE_URL}/audit`, {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify(body),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.detail || data.error || "Request failed");
+      if (!res.ok) throw new Error(data.detail || data.error || `HTTP ${res.status}`);
       setResponse(data);
     } catch (e) {
       setError(e.message);
@@ -138,6 +148,7 @@ function ApiSimulator() {
 
   return (
     <div className="page">
+      <p className="section-label">Developer Tools</p>
       <h2 className="page-title">API Simulator</h2>
       <p className="page-sub">
         Send a live <code>POST /audit</code> request and inspect the raw JSON response.
@@ -147,15 +158,17 @@ function ApiSimulator() {
         {/* Left: request editor */}
         <div className="sim-panel">
           <div className="sim-panel-header">
-            <span className="sim-method">POST</span>
-            <span className="sim-path">/audit</span>
+            <div>
+              <span className="sim-method">POST</span>
+              <span className="sim-path">/audit</span>
+            </div>
           </div>
           <textarea
             className="sim-code"
             value={requestText}
             onChange={(e) => setRequestText(e.target.value)}
             spellCheck={false}
-            rows={18}
+            style={{ minHeight: "320px" }}
           />
           <button
             className="btn btn-primary sim-run-btn"
@@ -169,11 +182,18 @@ function ApiSimulator() {
         {/* Right: response panel */}
         <div className="sim-panel">
           <div className="sim-panel-header">
-            <span className={`status-badge ${response ? "status-ok" : error ? "status-err" : "status-idle"}`}>
+            <span
+              style={{
+                fontSize: "11px",
+                fontWeight: 600,
+                letterSpacing: "0.1em",
+                color: response ? "var(--green)" : error ? "var(--red)" : "var(--text-muted)",
+              }}
+            >
               {response ? "200 OK" : error ? "Error" : "Awaiting response"}
             </span>
           </div>
-          <pre className="sim-code">
+          <pre className="sim-code" style={{ minHeight: "320px" }}>
             {error
               ? `// Error\n${error}`
               : response
@@ -193,23 +213,30 @@ export default function App() {
       <div className="app-root">
         {/* Top nav */}
         <header className="nav">
-          <div className="nav-brand">
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <span className="brand-icon">⚖</span>
             <span className="brand-name">DHARITRI</span>
             <span className="brand-tag">Fairness Unit Testing for AI</span>
           </div>
           <nav className="nav-tabs">
-            <NavLink to="/"          className={({ isActive }) => isActive ? "nav-tab active" : "nav-tab"}>
+            <NavLink
+              to="/"
+              end
+              className={({ isActive }) => (isActive ? "nav-tab active" : "nav-tab")}
+            >
               Dashboard
             </NavLink>
-            <NavLink to="/simulator" className={({ isActive }) => isActive ? "nav-tab active" : "nav-tab"}>
+            <NavLink
+              to="/simulator"
+              className={({ isActive }) => (isActive ? "nav-tab active" : "nav-tab")}
+            >
               API Simulator
             </NavLink>
           </nav>
         </header>
 
-        {/* Routes */}
-        <main className="page">
+        {/* Routes — no extra .page wrapper here; each screen renders its own */}
+        <main style={{ flex: 1 }}>
           <Routes>
             <Route path="/"          element={<Dashboard />} />
             <Route path="/simulator" element={<ApiSimulator />} />

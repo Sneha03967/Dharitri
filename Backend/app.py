@@ -125,6 +125,10 @@ if _USE_FASTAPI:
     @app.get("/health")
     def health():
         return {"status": "ok", "service": "DHARITRI"}
+    
+    @app.get("/")
+    def root():
+        return {"message": "DHARITRI API is live!", "docs": "/docs", "health": "/health"}
 
     @app.get("/experiments")
     def experiments():
@@ -143,7 +147,7 @@ if _USE_FASTAPI:
 
     if __name__ == "__main__":
         port = int(os.getenv("PORT", 8000))
-        uvicorn.run("app:app", host="0.0.0.0", port=port, reload=True)
+        uvicorn.run("app:app", host="0.0.0.0", port=port, reload=False)
 
 
 # ─────────────────────────────────────────────────────────────────
