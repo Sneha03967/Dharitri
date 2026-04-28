@@ -12,8 +12,8 @@ function Dashboard() {
   const [error, setError] = useState(null);
 
   return (
-    <div className="screen">
-      <h2 className="screen-title">Run Fairness Audit</h2>
+    <div className="page">
+      <h2 className="page-title">Run Fairness Audit</h2>
 
       {/* Input form */}
       <AuditForm
@@ -24,7 +24,7 @@ function Dashboard() {
 
       {/* Loading state */}
       {loading && (
-        <div className="loading-bar">
+        <div className="empty-state">
           <span className="spinner" />
           Running controlled identity experiments…
         </div>
@@ -32,7 +32,7 @@ function Dashboard() {
 
       {/* Error state */}
       {error && (
-        <div className="alert alert-danger">
+        <div className="error-box">
           <strong>Error:</strong> {error}
         </div>
       )}
@@ -41,7 +41,7 @@ function Dashboard() {
       {auditResult && !loading && (
         <div className="results-grid">
           {/* Stat cards */}
-          <div className="stat-cards">
+          <div className="metric-grid">
             <StatCard
               label="ISS Score"
               value={auditResult.iss_score.toFixed(3)}
@@ -79,10 +79,10 @@ function Dashboard() {
 
 function StatCard({ label, value, sub, highlight }) {
   return (
-    <div className={`stat-card ${highlight ? "stat-card--alert" : ""}`}>
-      <p className="stat-label">{label}</p>
-      <p className="stat-value">{value}</p>
-      <p className="stat-sub">{sub}</p>
+    <div className={`metric-card ${highlight ? "metric-card--alert" : ""}`}>
+      <p className="metric-label">{label}</p>
+      <p className="metric-value">{value}</p>
+      <p className="metric-sub">{sub}</p>
     </div>
   );
 }
@@ -90,9 +90,9 @@ function StatCard({ label, value, sub, highlight }) {
 function VerdictCard({ verdict }) {
   const isDetected = verdict !== "no_significant_difference";
   return (
-    <div className={`stat-card verdict-card ${isDetected ? "stat-card--alert" : "stat-card--ok"}`}>
-      <p className="stat-label">Verdict</p>
-      <p className="verdict-text">{verdict.replace(/_/g, " ")}</p>
+    <div className={`metric-card verdict-card ${isDetected ? "metric-card--alert" : "metric-card--ok"}`}>
+      <p className="metric-label">Verdict</p>
+      <p className="metric-sub">{verdict.replace(/_/g, " ")}</p>
     </div>
   );
 }
@@ -137,9 +137,9 @@ function ApiSimulator() {
   }
 
   return (
-    <div className="screen">
-      <h2 className="screen-title">API Simulator</h2>
-      <p className="screen-sub">
+    <div className="page">
+      <h2 className="page-title">API Simulator</h2>
+      <p className="page-sub">
         Send a live <code>POST /audit</code> request and inspect the raw JSON response.
       </p>
 
@@ -147,18 +147,18 @@ function ApiSimulator() {
         {/* Left: request editor */}
         <div className="sim-panel">
           <div className="sim-panel-header">
-            <span className="method-badge">POST</span>
-            <span className="endpoint-text">/audit</span>
+            <span className="sim-method">POST</span>
+            <span className="sim-path">/audit</span>
           </div>
           <textarea
-            className="code-editor"
+            className="sim-code"
             value={requestText}
             onChange={(e) => setRequestText(e.target.value)}
             spellCheck={false}
             rows={18}
           />
           <button
-            className="send-btn"
+            className="btn btn-primary sim-run-btn"
             onClick={handleSend}
             disabled={loading}
           >
@@ -173,7 +173,7 @@ function ApiSimulator() {
               {response ? "200 OK" : error ? "Error" : "Awaiting response"}
             </span>
           </div>
-          <pre className="code-output">
+          <pre className="sim-code">
             {error
               ? `// Error\n${error}`
               : response
@@ -190,26 +190,26 @@ function ApiSimulator() {
 export default function App() {
   return (
     <Router>
-      <div className="app">
+      <div className="app-root">
         {/* Top nav */}
-        <header className="navbar">
-          <div className="navbar-brand">
+        <header className="nav">
+          <div className="nav-brand">
             <span className="brand-icon">⚖</span>
             <span className="brand-name">DHARITRI</span>
             <span className="brand-tag">Fairness Unit Testing for AI</span>
           </div>
-          <nav className="navbar-links">
-            <NavLink to="/"          className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+          <nav className="nav-tabs">
+            <NavLink to="/"          className={({ isActive }) => isActive ? "nav-tab active" : "nav-tab"}>
               Dashboard
             </NavLink>
-            <NavLink to="/simulator" className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}>
+            <NavLink to="/simulator" className={({ isActive }) => isActive ? "nav-tab active" : "nav-tab"}>
               API Simulator
             </NavLink>
           </nav>
         </header>
 
         {/* Routes */}
-        <main className="main-content">
+        <main className="page">
           <Routes>
             <Route path="/"          element={<Dashboard />} />
             <Route path="/simulator" element={<ApiSimulator />} />
